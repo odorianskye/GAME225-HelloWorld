@@ -10,7 +10,7 @@ using UnityEngine.Windows;
 public class Calculator : MonoBehaviour
 {
     public TextMeshProUGUI printText;
-    private float prevInput = 0;
+    private float prevInput;
     private bool clearPrevInput;
 
     private EquationType equationType;
@@ -104,7 +104,14 @@ public class Calculator : MonoBehaviour
         printText.text = "0";
         clearPrevInput = true;
         prevInput = 0f;
+        equationType = EquationType.None;
+    }
 
+
+    //function to reset clearPrevInput without clearing the displayed input
+    public void Reset()
+    {
+        clearPrevInput = true;
         equationType = EquationType.None;
     }
 
@@ -114,6 +121,7 @@ public class Calculator : MonoBehaviour
         else if (equationType == EquationType.SUBTRACT) Subtract();
         else if (equationType == EquationType.MULTIPLY) Multiply();
         else if (equationType == EquationType.DIVIDE) Divide();
+        Reset();
 
     }
 
