@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: da18e6a8321dba04792db65b6898e945
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - gridRoot: {instanceID: 0}
+  - cellPrefab: {fileID: 9077828629735786277, guid: 6cccc3db21e3f4248849d2b0d53fc964,
+      type: 3}
+  - winLabel: {instanceID: 0}
+  - timeLabel: {instanceID: 0}
+  - scoreLabel: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

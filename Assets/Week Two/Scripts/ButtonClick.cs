@@ -8,7 +8,12 @@ public class ButtonClick : MonoBehaviour
     //clicky noise make brain go bbrrrrrr
 
     public AudioSource buttonClicks;
+    public AudioSource cannonFire;
+    public AudioSource missedSplash;
     public AudioClip[] buttonClicksArray;
+    public AudioClip[] cannonFireArray;
+    public AudioClip[] missedSplashArray;
+
 
     public void PlayButtonClick()
     {
@@ -17,4 +22,20 @@ public class ButtonClick : MonoBehaviour
         buttonClicks.clip = buttonClicksArray[randomIndex];
         buttonClicks.Play();
     }
+
+    public void PlayCannonFire()
+    {
+
+        cannonFire.Play();
+
+    }
+
+    public void PlaySplash()
+    {
+
+        missedSplash.Play();
+
+    }
+
+
 }
