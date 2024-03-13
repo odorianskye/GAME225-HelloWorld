@@ -9,12 +9,19 @@ public class EnemyPatrol : MonoBehaviour
     public Transform[] waypoints;
 
     private int currentWaypointIndex = 0;
-    private bool isPaused = true;
+    private bool isPaused = false;
     private float pauseTimer = 0f;
 
     private void Start()
     {
-        MoveTowardsWaypoint(waypoints[currentWaypointIndex].position);
+        if (waypoints.Length > 0)
+        {
+            MoveTowardsWaypoint(waypoints[currentWaypointIndex].position);
+        }
+        else
+        {
+            Debug.LogError("No waypoints assigned to EnemyPatrol script on " + gameObject.name);
+        }
     }
 
     private void Update()
@@ -37,10 +44,9 @@ public class EnemyPatrol : MonoBehaviour
             pauseTimer -= Time.deltaTime;
             if (pauseTimer <= 0f)
             {
-
                 isPaused = false;
 
-                //move to next waypoint
+                // Move to next waypoint
                 currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
                 MoveTowardsWaypoint(waypoints[currentWaypointIndex].position);
             }
@@ -51,4 +57,20 @@ public class EnemyPatrol : MonoBehaviour
     {
         transform.LookAt(waypointPosition);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // Deal damage to the player
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damageAmount);
+            }
+        }
+    }
+
+
+
 }

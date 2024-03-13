@@ -10,10 +10,15 @@ public class MazePlayer : MonoBehaviour
     public float mouseSensitivity = 100f;
     public float smoothTime = 0.1f;
     public int inventoryKeyCount = 0;
-
+    public int maxHealth = 100;
+    public int currentHealth;
+    public HealthBar healthBar;
+    
     public KeyCode interactKey = KeyCode.E;
+   
     public LayerMask keyLayer;
     public LayerMask doorLayer;
+    public LayerMask enemyLayer;
 
     private Camera playerCamera;
     private Vector2 lookInput;
@@ -26,6 +31,12 @@ public class MazePlayer : MonoBehaviour
     {
         playerCamera = GetComponentInChildren<Camera>();
         characterController = GetComponent<CharacterController>();
+        currentHealth = maxHealth;
+        if (healthBar != null)
+        {
+            healthBar.SetMaxHealth(maxHealth);
+            healthBar.SetHealth(currentHealth);
+        }
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -150,5 +161,32 @@ public class MazePlayer : MonoBehaviour
         }
 
     }
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        if (healthBar != null)
+        {
+            healthBar.SetHealth(currentHealth);
+        }
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("Player died!");
+        //disable player movement
+        characterController.enabled = false;
+        //show game over screen
+
+    }
+
+
 
 }
