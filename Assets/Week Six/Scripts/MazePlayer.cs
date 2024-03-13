@@ -9,11 +9,18 @@ public class MazePlayer : MonoBehaviour
     public float moveSpeed = 5f;
     public float mouseSensitivity = 100f;
     public float smoothTime = 0.1f;
+    public int inventoryKeyCount = 0;
+
+    public KeyCode interactKey = KeyCode.E;
+    public LayerMask keyLayer;
+    public LayerMask doorLayer;
 
     private Camera playerCamera;
     private Vector2 lookInput;
     private CharacterController characterController;
     private Vector3 smoothMoveVelocity;
+
+    private GameObject currentKey = null;
 
     void Start()
     {
@@ -43,6 +50,52 @@ public class MazePlayer : MonoBehaviour
 
         //rotate the player object along y-axis
         transform.rotation = Quaternion.Euler(0f, targetRotationY, 0f);
+
+        //interact with objects
+        if (Input.GetKeyDown(interactKey))
+        {
+            TryInteract();
+        }
+    }
+
+    private void TryInteract()
+    {
+
+        Debug.Log("Camera Forward Direction: " + playerCamera.transform.forward);
+
+        int playerLayerMask = 1 << LayerMask.NameToLayer("playerLayer");
+        int layerMask = ~playerLayerMask;
+
+        //raycast to check if player is near interactable objects
+        RaycastHit hit;
+        //max distance to interact with objects
+        //float maxInteractDistance = 10f;
+
+        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, Mathf.Infinity, layerMask))
+        {
+
+            //debug
+            Debug.Log("Raycast hit Point: " + hit.point);
+            Debug.Log("Raycast hit: " + hit.collider.gameObject.name);
+            Debug.DrawLine(playerCamera.transform.position, hit.point, Color.red, 0.5f);
+
+            //check if the hit object is a key
+            if (((1 << hit.collider.gameObject.layer) & keyLayer) != 0)
+            {
+                Debug.Log("Key found!");
+                PickUpKey(hit.collider.gameObject);
+            }
+            //check if the hit object is a door
+            else if (((1 << hit.collider.gameObject.layer) & doorLayer) != 0)
+            {
+                Debug.Log("Door found!");
+                TryOpenDoor(hit.collider.gameObject);
+            }
+        }
+        else
+        {
+            Debug.Log("Nothing to interact with!");
+        }
     }
 
     private Vector3 GetMoveDirection()
@@ -64,4 +117,38 @@ public class MazePlayer : MonoBehaviour
 
         return moveDirection;
     }
+
+    private void PickUpKey(GameObject keyObject)
+    {
+        Debug.Log("Key picked up!");
+        //add key to inventory
+        currentKey = keyObject;
+        inventoryKeyCount++;
+        //hide key
+        keyObject.SetActive(false);
+    }
+
+    private void TryOpenDoor(GameObject doorObject)
+    {
+        //check if player has key
+        if (currentKey != null)
+        {
+            //remove key from inventroy
+            Destroy(currentKey);
+
+            //open door
+            DoorHandler doorHandler = doorObject.GetComponent<DoorHandler>();
+            doorHandler.OpenDoor();
+            Debug.Log("Door opened!");
+
+            //reset current key
+            currentKey = null;
+        }
+        else
+        {
+            Debug.Log("You need a key to open this door!");
+        }
+
+    }
+
 }
